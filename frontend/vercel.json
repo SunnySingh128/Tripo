@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://tripo-yr8l.onrender.com"
-    }
-  ]
-}
