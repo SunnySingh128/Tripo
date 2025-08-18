@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server:{
     proxy:{
-      '/api':'https://tripo-yr8l.onrender.com',
+      '/api':{
+        target : 'https://tripo-yr8l.onrender.com',
+        changeOrigin : true
+      }
     }
   }
 })

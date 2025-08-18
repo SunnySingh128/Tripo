@@ -85,7 +85,7 @@ const handleSubmit = async () => {
 
   try {
     localStorage.setItem("groupName", formData.groupName);
-    const response = await fetch('/api/store', { // updated port
+    const response = await fetch('/api/api/store', { // updated port
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
