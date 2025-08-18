@@ -1,9 +1,15 @@
 const express = require('express');
 const { mongoose } = require('mongoose');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: "*",            // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allow all methods
+  allowedHeaders: ["*"],  // Allow all headers
+}));
+
+// app.use(cors());
 const router = require("./routes/otp.js");
 const store=require("./routes/index.js");
 const amount=require("./routes/storeamount.js")
