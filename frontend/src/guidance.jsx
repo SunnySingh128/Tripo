@@ -14,6 +14,7 @@ import {
   Zap,
   Home
 } from 'lucide-react';
+const api=import.meta.env.VITE_AP1_URL;
  // Import navigate from react-router-dom
 const VoiceCommandGuidance = () => {
   const [currentStep, setCurrentStep] = useState(0);

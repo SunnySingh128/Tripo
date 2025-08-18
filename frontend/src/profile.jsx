@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Laptop2, Leaf } from 'lucide-react';
-
+const api=import.meta.env.VITE_AP1_URL;
 const getThemeStyles = (theme) => {
   switch (theme) {
     case 'development':

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Users, User, DollarSign, Activity, XCircle, Check } from 'lucide-react';
-
+const api=import.meta.env.VITE_AP1_URL;
 const ActivityTrackerForm = () => {
   // Environment detection
   const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
@@ -127,13 +127,13 @@ const ActivityTrackerForm = () => {
   // Fetch group and members
   const fetchGroupAndMembers = async () => {
     try {
-      const groupResponse = await fetch('/api/get');
+      const groupResponse = await fetch(`{api}/api/get`);
       if (groupResponse.ok) {
         const groupData = await groupResponse.json();
         if (Array.isArray(groupData) && groupData.length > 0) {
           const name = localStorage.getItem("groupName");
           
-          const membersResponse = await fetch(`/api/getMembers?group=${name}`);
+          const membersResponse = await fetch(`${api}/api/getMembers?group=${name}`);
           if (membersResponse.ok) {
             const membersData = await membersResponse.json();
             setAvailableMembers(membersData.friends || []);
@@ -207,7 +207,7 @@ const ActivityTrackerForm = () => {
 
     if (groupName) {
       try {
-        const response = await fetch("/api/checkFriend", {
+        const response = await fetch(`${api}/api/checkFriend`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -250,7 +250,7 @@ const ActivityTrackerForm = () => {
       groupName: groupName
     };
     
-    fetch('/api/amount', {
+    fetch(`${api}/api/amount`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

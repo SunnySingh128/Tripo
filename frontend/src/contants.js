@@ -1,0 +1,1 @@
+const api=import.meta.env.VITE_AP1_URL;

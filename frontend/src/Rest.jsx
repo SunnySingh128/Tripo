@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Send, DollarSign, User, Building, Utensils, Coffee, Star, Sparkles, CheckCircle, Users, UserCheck,XCircle,Check } from 'lucide-react';
-
+const api=import.meta.env.VITE_AP1_URL;
 export default function RestaurantForm() {
   const [formData, setFormData] = useState({
     paymentType: 'group',
@@ -27,7 +27,7 @@ export default function RestaurantForm() {
       const name = localStorage.getItem("groupName");
       console.log(name);
   
-      const membersResponse = await fetch(`/api/getMembers?group=${name}`);
+      const membersResponse = await fetch(`${api}/api/getMembers?group=${name}`);
       if (membersResponse.ok) {
         const membersData = await membersResponse.json();
         // Assuming data is like: { friends: ["Alice", "Bob", "Charlie"] }
@@ -123,7 +123,7 @@ export default function RestaurantForm() {
   }
     if (groupName) {
     try {
-      const response = await fetch("/api/checkFriend", {
+      const response = await fetch(`${api}/api/checkFriend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -171,7 +171,7 @@ const requestData = {
   ...formData,  // Spread the existing form data
   groupName: groupName  // Add the group name
 };
-      const response = await fetch('/api/amount', {
+      const response = await fetch(`${api}/api/amount`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

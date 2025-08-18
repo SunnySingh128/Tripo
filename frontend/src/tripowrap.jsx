@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-
+const api=import.meta.env.VITE_AP1_URL;
 const TripoWrap = () => {
   const [loading, setLoading] = useState(true);
   const [tripData, setTripData] = useState({
@@ -24,7 +24,7 @@ const fetchTripData = async () => {
     const groupName = localStorage.getItem("groupName");
     if (!groupName) throw new Error("Group name not found in localStorage");
 
-    const response = await fetch("/api/fetchall", {
+    const response = await fetch(`${api}/api/fetchall`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ groupName })

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, User, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuth } from './auth.jsx';
-
+const api=import.meta.env.VITE_AP1_URL;
 export default function SimpleGroupForm() {
   const [formData, setFormData] = useState({
     groupName: '',
@@ -63,7 +63,7 @@ export default function SimpleGroupForm() {
     setError('');
 
     try {
-      const response = await fetch('/api/check', {
+      const response = await fetch(`${api}/api/check`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

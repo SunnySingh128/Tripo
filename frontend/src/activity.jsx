@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import { CheckCircle, Users, User, DollarSign, Activity,XCircle,Check } from 'lucide-react';
-
+const api=import.meta.env.VITE_AP1_URL;
 const ActivityTrackerForm = () => {
   // Environment detection
   const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
@@ -96,7 +96,7 @@ const [friendError, setFriendError] = useState("");
 const fetchGroupAndMembers = async () => {
   try {
     // First fetch group name
-    const groupResponse = await fetch('http://localhost:3000/get');
+    const groupResponse = await fetch(`${api}/api/get`);
     if (groupResponse.ok) {
       const groupData = await groupResponse.json();
       // Assuming data is like: [{ groupName: 'TripFriends' }]
@@ -104,7 +104,7 @@ const fetchGroupAndMembers = async () => {
      const name= localStorage.getItem("groupName");
         
         // Now fetch members using this group name
-        const membersResponse = await fetch(`http://localhost:3000/getMembers?group=${name}`);
+        const membersResponse = await fetch(`${api}/api/getMembers?group=${name}`);
         if (membersResponse.ok) {
           const membersData = await membersResponse.json();
           // Assuming data is like: { friends: ["Alice", "Bob", "Charlie"] }
@@ -179,7 +179,7 @@ useEffect(() => {
   // Backend friend check
   if (groupName) {
     try {
-      const response = await fetch("http://localhost:3000/checkFriend", {
+      const response = await fetch(`${api}/api/checkFriend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

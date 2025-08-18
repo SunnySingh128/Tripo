@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { useAuth } from './auth.jsx';
-
+const api=import.meta.env.VITE_AP1_URL;
 const OTPLoginSystem = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentStep, setCurrentStep] = useState('login'); // 'login', 'otp', 'success'
@@ -39,7 +39,7 @@ const OTPLoginSystem = () => {
     }));
     setError('');
   };
-
+const api=import.meta.env.VITE_AP1_URL;
   // Handle login form submission
   const handleLoginSubmit = async () => {
     setLoading(true);
@@ -53,7 +53,7 @@ const OTPLoginSystem = () => {
     }
 
     try {
-      const response = await fetch('/api/send-otp', {
+      const response = await fetch(`${api}/api/send-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const handleOTPSubmit = async () => {
   }
 
   try {
-    const response = await fetch('/api/verify-otp', {
+    const response = await fetch(`${api}/api/verify-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

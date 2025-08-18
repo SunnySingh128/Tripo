@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, User, DollarSign, Car, Plane, Train, Bus, Bike, Navigation, Code2, GitBranch, Database, XCircle } from 'lucide-react';
-
+const api=import.meta.env.VITE_AP1_URL;
 const TransportationPaymentForm = () => {
   const [formData, setFormData] = useState({
     payerName: '',
@@ -48,7 +48,7 @@ const validateForm = async () => {
 
   if (!newErrors.payerName && groupName) {
     try {
-      const response = await fetch("/api/checkFriend", {
+      const response = await fetch(`{api}/api/checkFriend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -90,7 +90,7 @@ const requestData = {
   ...formData,  // Spread the existing form data
   groupName: groupName  // Add the group name
 };
-            fetch('/api/amount', {
+            fetch(`${api}/api/amount`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, User, UserCheck, UserX, Sparkles, Code, Globe, Shield, Lock, Unlock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+const api=import.meta.env.VITE_AP1_URL;
 export default function LoginCheckForm() {
   const [currentStep, setCurrentStep] = useState('form');
   const [isAnimating, setIsAnimating] = useState(false);

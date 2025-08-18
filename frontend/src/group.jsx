@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plane, MapPin, Users, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
+const api=import.meta.env.VITE_AP1_URL;
 const GroupTripPlanner = () => {
   const [formData, setFormData] = useState({
     groupName: '',

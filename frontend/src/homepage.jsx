@@ -3,7 +3,7 @@ import { ChevronDown, User, MapPin, Utensils, Bed, Car, Plus, Settings, LogOut, 
 import { useNavigate,useLocation } from 'react-router-dom';
 import VoiceAssistant from './voice.jsx';
 // Enhanced Navbar Component with glassmorphism
-
+const api=import.meta.env.VITE_AP1_URL;
 const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
   const [scrolled, setScrolled] = useState(false);
   const [groupName, setGroupName] = useState('');

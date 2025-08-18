@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Check, Hotel, User, DollarSign, Code, Terminal, Coffee, Wifi, Bed, MapPin, Users, UserCheck,XCircle } from 'lucide-react'; 
-
+const api=import.meta.env.VITE_AP1_URL;
 const HotelPaymentForm = () => {
   const [formData, setFormData] = useState({
     paymentType: 'group', // 'group' or 'individual'
@@ -24,7 +24,7 @@ const [friendError, setFriendError] = useState("");
         const name = localStorage.getItem("groupName");
         console.log(name);
     
-        const membersResponse = await fetch(`/api/getMembers?group=${name}`);
+        const membersResponse = await fetch(`${api}/api/getMembers?group=${name}`);
         if (membersResponse.ok) {
           const membersData = await membersResponse.json();
           // Assuming data is like: { friends: ["Alice", "Bob", "Charlie"] }
@@ -144,7 +144,7 @@ const requestData = {
   groupName: groupName  // Add the group name
 };
 console.log(formData);
-        fetch('/api/amount', {
+        fetch(`${api}/api/amount`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
