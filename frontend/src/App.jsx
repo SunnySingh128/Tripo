@@ -25,18 +25,18 @@ function App() {
       <Routes>
         <Route path="/" element={<Anime />} />
         <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/Login" element={<Login />} />
+        <Route path="/Login" element={<ProtectedRoute><Login /></ProtectedRoute>} />
         <Route path="/Auth" element={<Auth />} />
-        <Route path="/Restaurants" element={<Rst />} />  
+        <Route path="/Restaurants" element={<ProtectedRoute><Rst /></ProtectedRoute>} />  
         <Route path="/Hotels" element={<ProtectedRoute><Hotels /></ProtectedRoute>} />
         <Route path="/Transportation" element={<ProtectedRoute><Transp /></ProtectedRoute>} />
         <Route path="/Activities" element={<ProtectedRoute><Activ /></ProtectedRoute>} />
-        <Route path="/TripoWrap" element={<TripoWrap />} />
+        <Route path="/TripoWrap" element={<ProtectedRoute><TripoWrap /></ProtectedRoute>}/>
         <Route path="/Guide" element={<ProtectedRoute><Guide /></ProtectedRoute>} />
         <Route path="/custom" element={<ProtectedRoute><Custom /></ProtectedRoute>} />
         <Route path="/Voice" element={<ProtectedRoute><VoiceNavigation /></ProtectedRoute>} />
         <Route path="/Signup" element={<Signup />} />
-        <Route path="/User" element={<User />} />
+        <Route path="/User" element={<ProtectedRoute><User /></ProtectedRoute>} />
         <Route path="/Group" element={<ProtectedRoute><Group /></ProtectedRoute>} />
         <Route path="/First" element={<First />} />
         <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
