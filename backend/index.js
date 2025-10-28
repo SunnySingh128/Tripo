@@ -3,6 +3,7 @@ const { mongoose } = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3000;
 const cors = require('cors');
+const path=require("path");
 app.use(cors({
   origin: "*",            // Allow all origins
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allow all methods
@@ -17,11 +18,11 @@ const fetchAll = require('./routes/fetchall');
 const Activ=require("./routes/activity")
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
-
+const favicon=require('serve-favicon');
 const { connectMongo } = require('./connection/index.js');
 app.use(express.urlencoded());
 app.use(express.json());
-
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use('/api', router);
 app.use('/api',store);
 app.use('/api',amount);

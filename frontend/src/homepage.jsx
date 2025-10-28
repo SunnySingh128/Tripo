@@ -1,34 +1,20 @@
-import React, { useState, useEffect,} from 'react';
-import { ChevronDown, User, MapPin, Utensils, Bed, Car, Plus, Settings, LogOut, Star, Heart, Sparkles, Zap, Globe, Camera, ShoppingBag, Music, Coffee, Gamepad2, Mountain, Waves, TreePine, Sun } from 'lucide-react';
-import { useNavigate,useLocation } from 'react-router-dom';
-import VoiceAssistant from './voice.jsx';
-// Enhanced Navbar Component with glassmorphism
-const api=import.meta.env.VITE_AP1_URL;
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, User, MapPin, Utensils, Bed, Car, Plus, Settings, LogOut, Star, Heart, Sparkles, Zap, Globe, Camera, ShoppingBag, Music, Coffee, Gamepad2, Mountain, Waves, TreePine, Sun, Wallet } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+const api = import.meta.env.VITE_AP1_URL;
+
 const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [groupName, setGroupName] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { name } = location.state || {};
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  const location = useLocation();
-  const { name } = location.state || {}
-  // useEffect(() => {
-  //   const fetchGroupName = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:3000/get');
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         setGroupName(data.groupName || '');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching group name:', error);
-  //     }
-  //   };
-
-  //   fetchGroupName();
-  // }, []);
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
@@ -40,12 +26,12 @@ const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
         <div className="flex items-center space-x-3 group">
           <div className="relative">
             <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl w-12 h-12 flex items-center justify-center font-bold text-xl text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-            <svg width="120" height="120" viewBox="0 0 120 120" className="mx-auto">
-              <circle cx="60" cy="60" r="50" fill="#10B981" opacity="0.2"/>
-              <path d="M30 60 L50 40 L70 60 L90 40" stroke="#10B981" strokeWidth="4" fill="none"/>
-              <circle cx="60" cy="70" r="8" fill="#F59E0B"/>
-              <text x="60" y="95" textAnchor="middle" fontSize="14" fill="white" fontWeight="bold">TRIPO</text>
-            </svg>
+              <svg width="120" height="120" viewBox="0 0 120 120" className="mx-auto">
+                <circle cx="60" cy="60" r="50" fill="#10B981" opacity="0.2"/>
+                <path d="M30 60 L50 40 L70 60 L90 40" stroke="#10B981" strokeWidth="4" fill="none"/>
+                <circle cx="60" cy="70" r="8" fill="#F59E0B"/>
+                <text x="60" y="95" textAnchor="middle" fontSize="14" fill="white" fontWeight="bold">TRIPO</text>
+              </svg>
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
           </div>
@@ -58,7 +44,6 @@ const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
           </div>
         </div>
         
-        {/* Group Name in Center */}
         {name && (
           <div className="absolute left-1/2 transform -translate-x-1/2">
             <span className="text-xl font-semibold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
@@ -67,33 +52,43 @@ const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
           </div>
         )}
                 
-        <div className="relative">
+        <div className="flex items-center space-x-3">
           <button
-            onClick={onUserClick}
-            className="flex items-center space-x-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-6 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
+            onClick={() => navigate('/TripoWrap')}
+            className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 px-5 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
           >
             <div className="bg-white/20 rounded-full p-1">
-              <User size={20} className="text-white" />
+              <Wallet size={20} className="text-white" />
             </div>
-            <span className="text-white font-semibold">Account</span>
-            <ChevronDown size={16} className={`text-white transform transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
+            <span className="text-white font-semibold">Expenses</span>
           </button>
-                    
-          {showDropdown && (
-            <UserDropdown onClose={onCloseDropdown} />
-          )}
+
+          <div className="relative">
+            <button
+              onClick={onUserClick}
+              className="flex items-center space-x-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-6 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
+            >
+              <div className="bg-white/20 rounded-full p-1">
+                <User size={20} className="text-white" />
+              </div>
+              <span className="text-white font-semibold">Account</span>
+              <ChevronDown size={16} className={`text-white transform transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
+            </button>
+                        
+            {showDropdown && (
+              <UserDropdown onClose={onCloseDropdown} />
+            )}
+          </div>
         </div>
       </div>
     </nav>
   );
 };
-// Enhanced User Dropdown wit
 
 const UserDropdown = ({ onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [view, setView] = useState('menu'); // 'menu' or 'profile'
-  const [profileData, setProfileData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -111,29 +106,15 @@ const UserDropdown = ({ onClose }) => {
             name: latestEntry.name || 'Guest User',
             email: latestEntry.email || 'No email provided'
           });
-          setProfileData(latestEntry); // Store complete profile data
         }
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
     }
   };
-const navigate=useNavigate();
-  const handleAction = (action) => {
-navigate("/profile")
-    
-    // console.log(`${action} clicked`);
-    // setIsVisible(false);
-    // setTimeout(() => {
-    //   if (onClose) onClose();
-    //   if (action === 'Logout') {
-    //     // Perform logout logic
-    //   }
-    // }, 200);
-  };
 
-  const handleBackToMenu = () => {
-    setView('menu');
+  const handleAction = (action) => {
+    navigate("/profile");
   };
 
   return (
@@ -143,106 +124,45 @@ navigate("/profile")
       }`}
       onClick={(e) => e.stopPropagation()}
     >
-      {view === 'menu' ? (
-        <div className="p-2">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full w-10 h-10 flex items-center justify-center">
-                <User size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800 truncate max-w-[140px]">
-                  {userData?.name}
-                </p>
-                <p className="text-sm text-gray-500 truncate max-w-[140px]">
-                  {userData?.email}
-                </p>
-              </div>
+      <div className="p-2">
+        <div className="px-4 py-3 border-b border-gray-100">
+          <div className="flex items-center space-x-3">
+            <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full w-10 h-10 flex items-center justify-center">
+              <User size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 truncate max-w-[140px]">
+                {userData?.name}
+              </p>
+              <p className="text-sm text-gray-500 truncate max-w-[140px]">
+                {userData?.email}
+              </p>
             </div>
           </div>
-
-          <button
-            onClick={() => handleAction('Profile')}
-            className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
-          >
-            <User size={18} className="text-emerald-600" />
-            <span className="font-medium">Profile</span>
-          </button>
-
-          {/* <button
-            onClick={() => handleAction('Settings')}
-            className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
-          >
-            <Settings size={18} className="text-emerald-600" />
-            <span className="font-medium">Settings</span>
-          </button> */}
-
-          <hr className="my-2 border-gray-200" />
-
-          <button
-            onClick={() => handleAction('Logout')}
-            className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
-          >
-            <LogOut size={18} />
-            <span className="font-medium">Logout</span>
-          </button>
         </div>
-      ) : (
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <button 
-              onClick={handleBackToMenu}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
-              <ChevronLeft size={20} className="text-gray-600" />
-            </button>
-            <h3 className="font-semibold text-gray-800">User Profile</h3>
-            <button 
-              onClick={() => {
-                setIsVisible(false);
-                setTimeout(onClose, 200);
-              }}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
-              <X size={20} className="text-gray-600" />
-            </button>
-          </div>
 
-          {profileData && (
-            <div className="space-y-4">
-              <div className="flex flex-col items-center">
-                <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full w-16 h-16 flex items-center justify-center mb-3">
-                  <User size={28} className="text-white" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-800">{profileData.name}</h2>
-                <p className="text-sm text-gray-500">{profileData.email}</p>
-              </div>
+        <button
+          onClick={() => handleAction('Profile')}
+          className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
+        >
+          <User size={18} className="text-emerald-600" />
+          <span className="font-medium">Profile</span>
+        </button>
 
-              <div className="space-y-3">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Age</p>
-                  <p className="font-medium">{profileData.age || 'Not specified'}</p>
-                </div>
+        <hr className="my-2 border-gray-200" />
 
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Gender</p>
-                  <p className="font-medium capitalize">{profileData.gender || 'Not specified'}</p>
-                </div>
-
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Registered On</p>
-                  <p className="font-medium">{profileData.timestamp || 'Unknown'}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        <button
+          onClick={() => handleAction('Logout')}
+          className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
+        >
+          <LogOut size={18} />
+          <span className="font-medium">Logout</span>
+        </button>
+      </div>
     </div>
   );
 };
 
-// Enhanced Option Card with premium interactions
 const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected, onToggleSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -263,10 +183,8 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
           isHovered ? 'scale-105 -rotate-1' : 'scale-100 rotate-0'
         } ${isPressed ? 'scale-95' : ''}`}
       >
-        {/* Animated background gradient */}
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
         
-        {/* Floating particles effect */}
         <div className="absolute inset-0 overflow-hidden">
           <div className={`absolute w-2 h-2 bg-white rounded-full animate-ping top-4 right-4 ${isHovered ? 'opacity-50' : 'opacity-0'} transition-opacity duration-300`}></div>
           <div className={`absolute w-1 h-1 bg-white rounded-full animate-pulse top-8 left-6 ${isHovered ? 'opacity-30' : 'opacity-0'} transition-opacity duration-500`}></div>
@@ -285,7 +203,6 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
           </div>
         </div>
         
-        {/* Selection indicator */}
         <div className={`absolute top-4 left-4 w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br ${gradient} transform transition-all duration-300 ${
           isSelected ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         }`}>
@@ -294,13 +211,11 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
           </div>
         </div>
         
-        {/* Ripple effect */}
         <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${gradient} opacity-20 transform transition-all duration-300 ${
           isPressed ? 'scale-100' : 'scale-0'
         }`}></div>
       </button>
       
-      {/* Floating action button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -316,7 +231,6 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
   );
 };
 
-// Enhanced Customize Component with premium styling
 const Customize = ({ customCategories, onAddCategory }) => {
   const [newCategory, setNewCategory] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -358,7 +272,6 @@ const Customize = ({ customCategories, onAddCategory }) => {
 
   return (
     <div className="bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/30 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse"></div>
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
       
@@ -429,9 +342,9 @@ const Customize = ({ customCategories, onAddCategory }) => {
   );
 };
 
-// Enhanced Options Component with better layout
 const Options = ({ customCategories, onAddCategory, selectedCategories, onToggleCategory }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  
   const predefinedOptions = [
     { 
       icon: Utensils, 
@@ -458,57 +371,17 @@ const Options = ({ customCategories, onAddCategory, selectedCategories, onToggle
       gradient: 'from-green-500 to-emerald-500'
     },
   ];
+  
   function addchanges(option){
     console.log(option.label);
     navigate(`/${option.label}`);
   }
-// setpages
-async function setpages(name) {
-  console.log(name);
-  localStorage.setItem("name", JSON.stringify(name));
 
-//   // const { GroupName } = location.state || {};
-// const GroupName="makshad";
-//   console.log(GroupName);
-//   try {
-//     // First POST request to /store1
-//     const store1Response = await fetch("http://localhost:3000/store1", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ name, GroupName }),
-//     });
-
-//     if (!store1Response.ok) {
-//       throw new Error(`Error in /store1: ${store1Response.statusText}`);
-//     }
-
-//     const store1Data = await store1Response.json();
-//     console.log("Stored in /store1:", store1Data);
-
-//     // Second POST request to /activity
-//     const activityResponse = await fetch("http://localhost:3000/activity", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ GroupName }),
-//     });
-
-//     if (!activityResponse.ok) {
-//       throw new Error(`Error in /activity: ${activityResponse.statusText}`);
-//     }
-
-//     const activityData = await activityResponse.json();
-//     console.log("Stored in /activity:", activityData);
-
+  async function setpages(name) {
+    console.log(name);
+    localStorage.setItem("name", JSON.stringify(name));
     navigate("/custom");
-
-  // } catch (error) {
-  //   console.error("Error during fetch requests:", error);
-  // }
-}
+  }
 
   return (
     <div className="space-y-12">
@@ -550,7 +423,7 @@ async function setpages(name) {
             category={option.category}
             isSelected={selectedCategories.includes(option.category)}
             onToggleSelect={() => onToggleCategory(option.category)}
-            onClick={()=>addchanges(option)}
+            onClick={() => addchanges(option)}
           />
         ))}
       </div>
@@ -575,7 +448,7 @@ async function setpages(name) {
                 category={category.name}
                 isSelected={selectedCategories.includes(category.name)}
                 onToggleSelect={() => onToggleCategory(category.name)}
-                onClick={setpages(category.name)}
+                onClick={() => setpages(category.name)}
               />
             ))}
           </div>
@@ -585,7 +458,6 @@ async function setpages(name) {
   );
 };
 
-// Main App Component with enhanced features
 const App = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [customCategories, setCustomCategories] = useState([]);
@@ -611,7 +483,6 @@ const App = () => {
     );
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showUserDropdown && !event.target.closest('.relative')) {
@@ -627,7 +498,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute top-1/2 right-0 w-80 h-80 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
@@ -646,7 +516,6 @@ const App = () => {
           onToggleCategory={handleToggleCategory}
         />
         
-        {/* Selection Summary */}
         {selectedCategories.length > 0 && (
           <div className="mt-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-8 text-white shadow-2xl">
             <div className="flex items-center space-x-3 mb-4">
@@ -669,7 +538,7 @@ const App = () => {
           </div>
         )}
       </main>
-      <VoiceAssistant></VoiceAssistant>
+
       <footer className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white py-12 mt-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-6 text-center relative z-10">

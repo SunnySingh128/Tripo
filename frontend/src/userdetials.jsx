@@ -24,7 +24,7 @@ const UserDataForm = () => {
   // navigate
   const navigate = useNavigate();
   function gon(){
-navigate('/Guide')
+navigate('/Group')
   }
 
   // Save data to localStorage whenever storedData changes
@@ -124,14 +124,14 @@ navigate('/Guide')
               <Leaf size={36} />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              EcoDev Data Portal
+             Fill Your All Details
             </h1>
             <div className="p-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full text-white animate-pulse">
               <Code size={36} />
             </div>
           </div>
           <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Sustainable Development & Environmental Data Collection with persistent storage
+            Experience seamless data collection with style
           </p>
         </div>
 
@@ -255,125 +255,6 @@ navigate('/Guide')
                 <Code size={20} />
               </button>
             </form>
-          </div>
-
-          {/* Data Display Section */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-teal-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                <Code className="text-teal-600" size={28} />
-                <span>Stored Data ({storedData.length})</span>
-              </h2>
-              {storedData.length > 0 && (
-                <button 
-                  onClick={() => {
-                    setStoredData([]);
-                    localStorage.removeItem('userDataEntries');
-                  }}
-                  className="text-sm bg-gradient-to-r from-red-400 to-red-500 text-white px-4 py-2 rounded-lg hover:from-red-500 hover:to-red-600 transition-all"
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-            
-            <div className="space-y-4 max-h-[32rem] overflow-y-auto pr-2">
-              {storedData.length === 0 ? (
-                <div className="text-center py-12 text-slate-500">
-                  <TreePine size={48} className="mx-auto mb-4 text-slate-300 animate-pulse" />
-                  <p className="text-lg">No data stored yet.</p>
-                  <p className="text-sm mt-1">Add your first entry to see it here!</p>
-                </div>
-              ) : (
-                storedData.map((entry, index) => (
-                  <div
-                    key={entry.id}
-                    className="bg-gradient-to-r from-slate-50 to-emerald-50 p-5 rounded-lg border border-emerald-100 hover:shadow-md transition-all duration-300 animate-fade-in relative group"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                          <UserCheck size={18} className="text-emerald-600" />
-                          {entry.name}
-                        </h3>
-                        <div className="mt-3 space-y-2 text-sm text-slate-600">
-                          <p className="flex items-center gap-2">
-                            <Calendar size={16} className="text-teal-600" />
-                            <span>Age: <span className="font-medium">{entry.age}</span></span>
-                          </p>
-                          <p className="flex items-center gap-2">
-                            <Mail size={16} className="text-cyan-600" />
-                            <span className="truncate">{entry.email}</span>
-                          </p>
-                          <p className="flex items-center gap-2">
-                            <Users size={16} className="text-emerald-600" />
-                            <span>Gender: <span className="capitalize font-medium">{entry.gender}</span></span>
-                          </p>
-                        </div>
-                        <p className="text-xs text-slate-400 mt-3">
-                          Added: {entry.timestamp}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => deleteEntry(entry.id)}
-                        className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        title="Delete entry"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Data Export Section */}
-        <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-cyan-100">
-          <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <Code className="text-cyan-600" />
-            Data Management
-          </h2>
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={() => {
-                const dataStr = JSON.stringify(storedData, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                const exportName = `user-data-${new Date().toISOString()}.json`;
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportName);
-                linkElement.click();
-              }}
-              disabled={storedData.length === 0}
-              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${
-                storedData.length === 0 
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed' 
-                  : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
-              }`}
-            >
-              <Code size={16} />
-              Export JSON
-            </button>
-            
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(storedData, null, 2));
-                alert('Data copied to clipboard!');
-              }}
-              disabled={storedData.length === 0}
-              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${
-                storedData.length === 0 
-                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed' 
-                  : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
-              }`}
-            >
-              <Mail size={16} />
-              Copy to Clipboard
-            </button>
           </div>
         </div>
       </div>

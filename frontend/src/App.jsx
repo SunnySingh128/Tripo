@@ -13,12 +13,10 @@ import First from "./firstpage.jsx"
 import Profile from "./profile.jsx"
 import ProtectedRoute from './protected.jsx';
 import { AuthProvider } from './auth.jsx';
-import VoiceNavigation from './voice.jsx';
 import TripoWrap from './tripowrap.jsx';
 import Login from './login.jsx';
 import Auth from './authe.jsx';
 import Custom from "./customizepages.jsx"
-import Guide from "./guidance.jsx"
 function App() {
   return (
         <AuthProvider>
@@ -32,9 +30,7 @@ function App() {
         <Route path="/Transportation" element={<ProtectedRoute><Transp /></ProtectedRoute>} />
         <Route path="/Activities" element={<ProtectedRoute><Activ /></ProtectedRoute>} />
         <Route path="/TripoWrap" element={<ProtectedRoute><TripoWrap /></ProtectedRoute>}/>
-        <Route path="/Guide" element={<ProtectedRoute><Guide /></ProtectedRoute>} />
         <Route path="/custom" element={<ProtectedRoute><Custom /></ProtectedRoute>} />
-        <Route path="/Voice" element={<ProtectedRoute><VoiceNavigation /></ProtectedRoute>} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/User" element={<ProtectedRoute><User /></ProtectedRoute>} />
         <Route path="/Group" element={<ProtectedRoute><Group /></ProtectedRoute>} />

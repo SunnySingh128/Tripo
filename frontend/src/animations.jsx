@@ -9,7 +9,7 @@ const TripoLoadingAnimation = () => {
     // Set animation complete after 9 seconds
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 9000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
