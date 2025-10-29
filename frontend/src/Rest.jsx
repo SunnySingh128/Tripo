@@ -484,19 +484,6 @@ const requestData = {
 )}
         </div>
 
-        {/* Interactive Data Preview */}
-        <div className="mt-8 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-          <div className="flex items-center justify-center mb-4">
-            <Coffee className="w-5 h-5 text-emerald-400 mr-2 animate-pulse" />
-            <h3 className="text-emerald-200 font-semibold">Live Data Preview</h3>
-          </div>
-          <div className="bg-black/20 rounded-xl p-4 font-mono text-sm">
-            <pre className="text-emerald-300 overflow-auto">
-              {JSON.stringify(formData, null, 2)}
-            </pre>
-          </div>
-        </div>
-
         {/* Progress Indicator */}
         <div className="mt-6 flex justify-center space-x-2">
           {[0, 1, 2, 3].map((step) => {
