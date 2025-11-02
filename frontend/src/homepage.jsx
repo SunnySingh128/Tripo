@@ -116,7 +116,10 @@ const UserDropdown = ({ onClose }) => {
   const handleAction = (action) => {
     navigate("/profile");
   };
-
+   const sessionexpires = (action) => {
+    if(action === "Logout")
+      navigate("/signup");
+  };
   return (
     <div 
       className={`absolute right-0 mt-4 w-64 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 z-50 transform transition-all duration-300 ${
@@ -152,7 +155,7 @@ const UserDropdown = ({ onClose }) => {
         <hr className="my-2 border-gray-200" />
 
         <button
-          onClick={() => handleAction('Logout')}
+          onClick={() => sessionexpires('Logout')}
           className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
         >
           <LogOut size={18} />

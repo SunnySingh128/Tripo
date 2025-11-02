@@ -469,7 +469,7 @@ const requestData = {
   <div className="mb-8 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-5 rounded-xl shadow-xl animate-transport-arrival">
     <div className="flex items-center">
       <Check className="mr-3 animate-transport-delivered" size={24} />
-      <span className="font-semibold text-lg">Friend exists in the group successfully!</span>
+      <span className="font-semibold text-lg">Thank you</span>
     </div>
   </div>
 )}
