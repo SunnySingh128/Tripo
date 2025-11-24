@@ -102,7 +102,7 @@ console.log(payerName,groupName);
   }
 }
 async function checkExistsGroup(req,res){
-  const {groupName,userName}=req.body;
+  const {groupName}=req.body;
    const group = await Group.findOne({ groupName });
       //  const isFriend = group.friends.includes(payerName);
     if(!group ){

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, User, MapPin, Utensils, Bed, Car, Plus, Settings, LogOut, Star, Heart, Sparkles, Zap, Globe, Camera, ShoppingBag, Music, Coffee, Gamepad2, Mountain, Waves, TreePine, Sun, Wallet } from 'lucide-react';
+import { ChevronDown, User, MapPin, Utensils, Bed, Car, Plus, Settings, LogOut, Star, Heart, Sparkles, Zap, Globe, Camera, ShoppingBag, Music, Coffee, Gamepad2, Mountain, Waves, TreePine, Sun, Wallet, Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const api = import.meta.env.VITE_AP1_URL;
 
-const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
+const Navbar = ({ onUserClick, showDropdown, onCloseDropdown, isMobileMenuOpen, onToggleMobileMenu }) => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,57 +22,73 @@ const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
         ? 'bg-gradient-to-r from-emerald-900/95 to-teal-900/95 backdrop-blur-lg shadow-2xl' 
         : 'bg-gradient-to-r from-emerald-800 to-teal-800'
     }`}>
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3 group">
-          <div className="relative">
-            <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl w-12 h-12 flex items-center justify-center font-bold text-xl text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-              <svg width="120" height="120" viewBox="0 0 120 120" className="mx-auto">
-                <circle cx="60" cy="60" r="50" fill="#10B981" opacity="0.2"/>
-                <path d="M30 60 L50 40 L70 60 L90 40" stroke="#10B981" strokeWidth="4" fill="none"/>
-                <circle cx="60" cy="70" r="8" fill="#F59E0B"/>
-                <text x="60" y="95" textAnchor="middle" fontSize="14" fill="white" fontWeight="bold">TRIPO</text>
-              </svg>
+      <div className="container mx-auto px-4 sm:px-6 py-3 md:py-4 flex justify-between items-center">
+        {/* Logo and Mobile Menu Button */}
+        <div className="flex items-center space-x-2 md:space-x-3">
+          {/* Mobile menu button */}
+          <button 
+            className="md:hidden p-2 rounded-lg bg-emerald-700/50 text-white hover:bg-emerald-600 transition-colors"
+            onClick={onToggleMobileMenu}
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          {/* Logo */}
+          <div className="flex items-center space-x-2 md:space-x-3 group">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center font-bold text-xl text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+                <svg width={isMobileMenuOpen ? "80" : "120"} height={isMobileMenuOpen ? "80" : "120"} viewBox="0 0 120 120" className="mx-auto">
+                  <circle cx="60" cy="60" r="50" fill="#10B981" opacity="0.2"/>
+                  <path d="M30 60 L50 40 L70 60 L90 40" stroke="#10B981" strokeWidth="4" fill="none"/>
+                  <circle cx="60" cy="70" r="8" fill="#F59E0B"/>
+                  <text x="60" y="95" textAnchor="middle" fontSize="14" fill="white" fontWeight="bold">TRIPO</text>
+                </svg>
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-yellow-400 rounded-full animate-pulse"></div>
             </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
-            Tripo
-          </span>
-          <div className="hidden sm:flex items-center space-x-1 ml-2">
-            <Star className="text-yellow-400 animate-pulse" size={16} />
-            <span className="text-emerald-200 text-sm">Adventure Awaits</span>
+            <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+              Tripo
+            </span>
+            <div className="hidden sm:flex items-center space-x-1 ml-2">
+              <Star className="text-yellow-400 animate-pulse" size={16} />
+              <span className="text-emerald-200 text-sm hidden lg:inline">Adventure Awaits</span>
+            </div>
           </div>
         </div>
         
+        {/* Name in center - Hidden on mobile when menu is open */}
         {name && (
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <span className="text-xl font-semibold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+          <div className={`absolute left-1/2 transform -translate-x-1/2 ${isMobileMenuOpen ? 'hidden' : 'hidden md:block'}`}>
+            <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
               {name}
             </span>
           </div>
         )}
                 
-        <div className="flex items-center space-x-3">
+        {/* Mobile buttons - Always visible */}
+        <div className="flex items-center space-x-2">
+          {/* Expenses Button */}
           <button
             onClick={() => navigate('/TripoWrap')}
-            className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 px-5 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
+            className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 px-3 py-2 md:px-5 md:py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
           >
             <div className="bg-white/20 rounded-full p-1">
-              <Wallet size={20} className="text-white" />
+              <Wallet size={16} className="md:w-5 md:h-5 text-white" />
             </div>
-            <span className="text-white font-semibold">Expenses</span>
+            <span className="text-white font-semibold text-sm md:text-base hidden sm:block">Expenses</span>
           </button>
 
+          {/* Account Button */}
           <div className="relative">
             <button
               onClick={onUserClick}
-              className="flex items-center space-x-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-6 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
+              className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-3 py-2 md:px-6 md:py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
             >
               <div className="bg-white/20 rounded-full p-1">
-                <User size={20} className="text-white" />
+                <User size={16} className="md:w-5 md:h-5 text-white" />
               </div>
-              <span className="text-white font-semibold">Account</span>
-              <ChevronDown size={16} className={`text-white transform transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
+              <span className="text-white font-semibold text-sm md:text-base hidden sm:block">Account</span>
+              <ChevronDown size={14} className={`text-white transform transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''} hidden md:block`} />
             </button>
                         
             {showDropdown && (
@@ -81,11 +97,23 @@ const Navbar = ({ onUserClick, showDropdown, onCloseDropdown }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Navigation Menu - Only for additional options */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-emerald-800/95 backdrop-blur-lg border-t border-emerald-700/50">
+          <div className="container mx-auto px-4 py-4 space-y-3">
+            {/* Additional mobile menu items can go here */}
+            <div className="text-center">
+              <span className="text-emerald-200 text-sm">Welcome to Tripo!</span>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
 
-const UserDropdown = ({ onClose }) => {
+const UserDropdown = ({ onClose, isMobile = false }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
@@ -115,14 +143,19 @@ const UserDropdown = ({ onClose }) => {
 
   const handleAction = (action) => {
     navigate("/profile");
+    onClose();
   };
-   const sessionexpires = (action) => {
-    if(action === "Logout")
+
+  const sessionexpires = (action) => {
+    if (action === "Logout") {
       navigate("/signup");
+      onClose();
+    }
   };
+
   return (
     <div 
-      className={`absolute right-0 mt-4 w-64 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 z-50 transform transition-all duration-300 ${
+      className={`absolute ${isMobile ? 'right-0 mt-2 w-56' : 'right-0 mt-2 md:mt-4 w-64'} bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 z-50 transform transition-all duration-300 ${
         isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-2 scale-95'
       }`}
       onClick={(e) => e.stopPropagation()}
@@ -134,10 +167,10 @@ const UserDropdown = ({ onClose }) => {
               <User size={20} className="text-white" />
             </div>
             <div>
-              <p className="font-semibold text-gray-800 truncate max-w-[140px]">
+              <p className="font-semibold text-gray-800 truncate max-w-[140px] text-sm md:text-base">
                 {userData?.name}
               </p>
-              <p className="text-sm text-gray-500 truncate max-w-[140px]">
+              <p className="text-xs md:text-sm text-gray-500 truncate max-w-[140px]">
                 {userData?.email}
               </p>
             </div>
@@ -149,7 +182,7 @@ const UserDropdown = ({ onClose }) => {
           className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
         >
           <User size={18} className="text-emerald-600" />
-          <span className="font-medium">Profile</span>
+          <span className="font-medium text-sm md:text-base">Profile</span>
         </button>
 
         <hr className="my-2 border-gray-200" />
@@ -159,7 +192,7 @@ const UserDropdown = ({ onClose }) => {
           className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] m-1"
         >
           <LogOut size={18} />
-          <span className="font-medium">Logout</span>
+          <span className="font-medium text-sm md:text-base">Logout</span>
         </button>
       </div>
     </div>
@@ -182,39 +215,39 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`w-full bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 p-8 flex flex-col items-center space-y-4 border border-white/30 relative overflow-hidden transform ${
+        className={`w-full bg-white/80 backdrop-blur-lg rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 p-4 md:p-6 lg:p-8 flex flex-col items-center space-y-3 md:space-y-4 border border-white/30 relative overflow-hidden transform ${
           isHovered ? 'scale-105 -rotate-1' : 'scale-100 rotate-0'
         } ${isPressed ? 'scale-95' : ''}`}
       >
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
         
         <div className="absolute inset-0 overflow-hidden">
-          <div className={`absolute w-2 h-2 bg-white rounded-full animate-ping top-4 right-4 ${isHovered ? 'opacity-50' : 'opacity-0'} transition-opacity duration-300`}></div>
-          <div className={`absolute w-1 h-1 bg-white rounded-full animate-pulse top-8 left-6 ${isHovered ? 'opacity-30' : 'opacity-0'} transition-opacity duration-500`}></div>
+          <div className={`absolute w-2 h-2 bg-white rounded-full animate-ping top-2 right-2 md:top-4 md:right-4 ${isHovered ? 'opacity-50' : 'opacity-0'} transition-opacity duration-300`}></div>
+          <div className={`absolute w-1 h-1 bg-white rounded-full animate-pulse top-4 left-3 md:top-8 md:left-6 ${isHovered ? 'opacity-30' : 'opacity-0'} transition-opacity duration-500`}></div>
         </div>
         
-        <div className={`bg-gradient-to-br ${gradient} rounded-2xl p-6 transform transition-all duration-300 ${isHovered ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} relative`}>
-          <Icon size={36} className="text-white drop-shadow-lg" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-bounce"></div>
+        <div className={`bg-gradient-to-br ${gradient} rounded-xl md:rounded-2xl p-3 md:p-4 lg:p-6 transform transition-all duration-300 ${isHovered ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} relative`}>
+          <Icon size={24} className="md:w-6 md:h-6 lg:w-8 lg:h-8 xl:w-9 xl:h-9 text-white drop-shadow-lg" />
+          <div className="absolute -top-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full animate-bounce"></div>
         </div>
         
         <div className="text-center z-10">
-          <span className="text-xl font-bold text-gray-800 mb-2 block">{label}</span>
+          <span className="text-base md:text-lg lg:text-xl font-bold text-gray-800 mb-1 md:mb-2 block">{label}</span>
           <div className="flex items-center justify-center space-x-1">
-            <Star className="text-yellow-400" size={14} />
-            <span className="text-sm text-gray-600">Popular</span>
+            <Star className="text-yellow-400 w-3 h-3 md:w-4 md:h-4" />
+            <span className="text-xs md:text-sm text-gray-600">Popular</span>
           </div>
         </div>
         
-        <div className={`absolute top-4 left-4 w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br ${gradient} transform transition-all duration-300 ${
+        <div className={`absolute top-2 left-2 md:top-4 md:left-4 w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-white bg-gradient-to-br ${gradient} transform transition-all duration-300 ${
           isSelected ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         }`}>
           <div className="w-full h-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
+            <div className="w-1 h-1 md:w-2 md:h-2 bg-white rounded-full"></div>
           </div>
         </div>
         
-        <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${gradient} opacity-20 transform transition-all duration-300 ${
+        <div className={`absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-br ${gradient} opacity-20 transform transition-all duration-300 ${
           isPressed ? 'scale-100' : 'scale-0'
         }`}></div>
       </button>
@@ -224,11 +257,11 @@ const OptionCard = ({ icon: Icon, label, onClick, gradient, category, isSelected
           e.stopPropagation();
           onToggleSelect();
         }}
-        className={`absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-all duration-300 ${
+        className={`absolute -top-1 -right-1 md:-top-2 md:-right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-all duration-300 ${
           isSelected ? 'scale-100 opacity-100' : 'scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100'
         }`}
       >
-        <Heart size={14} className={isSelected ? 'fill-current' : ''} />
+        <Heart size={12} className={isSelected ? 'fill-current' : ''} />
       </button>
     </div>
   );
@@ -274,67 +307,67 @@ const Customize = ({ customCategories, onAddCategory }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/30 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+    <div className="bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-lg rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-6 lg:p-8 border border-white/30 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-20 h-20 md:w-32 md:h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse"></div>
+      <div className="absolute bottom-0 left-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
       
       <div className="relative z-10">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-3">
-            <Sparkles className="text-white" size={28} />
+        <div className="flex items-center space-x-2 md:space-x-3 mb-4 md:mb-6">
+          <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl md:rounded-2xl p-2 md:p-3">
+            <Sparkles className="text-white w-5 h-5 md:w-7 md:h-7" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
               Customize Your Adventure
             </h3>
-            <p className="text-gray-600">Create unique categories for your perfect trip</p>
+            <p className="text-gray-600 text-sm md:text-base">Create unique categories for your perfect trip</p>
           </div>
         </div>
         
-        <div className="flex space-x-3 mb-6">
+        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mb-4 md:mb-6">
           <div className="flex-1 relative">
             <input
               type="text"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Add custom category (e.g., Photography, Wellness)"
-              className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500"
+              placeholder="Add custom category..."
+              className="w-full px-4 py-3 md:px-6 md:py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500 text-sm md:text-base"
               disabled={isAdding}
             />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <Zap className="text-emerald-500 animate-pulse" size={20} />
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <Zap className="text-emerald-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
             </div>
           </div>
           <button
             onClick={handleAddCategory}
             disabled={isAdding}
-            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-4 rounded-2xl transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-3 md:px-6 md:py-4 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-2 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm md:text-base"
           >
-            <Plus size={20} className={isAdding ? 'animate-spin' : ''} />
+            <Plus size={18} className={isAdding ? 'animate-spin' : ''} />
             <span className="font-semibold">{isAdding ? 'Adding...' : 'Add'}</span>
           </button>
         </div>
         
         {customCategories.length > 0 && (
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-gray-700 flex items-center space-x-2">
-              <Globe size={20} className="text-emerald-600" />
+          <div className="space-y-3 md:space-y-4">
+            <h4 className="text-base md:text-lg font-semibold text-gray-700 flex items-center space-x-2">
+              <Globe className="text-emerald-600 w-4 h-4 md:w-5 md:h-5" />
               <span>Your Custom Categories</span>
-              <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-sm">
+              <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs md:text-sm">
                 {customCategories.length}
               </span>
             </h4>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 md:gap-3">
               {customCategories.map((category) => (
                 <div
                   key={category.id}
-                  className="bg-white/80 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center space-x-2 transform hover:scale-105"
+                  className="bg-white/80 backdrop-blur-sm border border-white/30 px-3 py-1 md:px-4 md:py-2 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center space-x-2 transform hover:scale-105"
                 >
                   <div className={`bg-gradient-to-r ${category.gradient} rounded-full p-1`}>
-                    <category.icon size={16} className="text-white" />
+                    <category.icon className="w-3 h-3 md:w-4 md:h-4 text-white" />
                   </div>
-                  <span className="text-gray-800 font-medium">{category.name}</span>
+                  <span className="text-gray-800 font-medium text-xs md:text-sm">{category.name}</span>
                 </div>
               ))}
             </div>
@@ -387,36 +420,36 @@ const Options = ({ customCategories, onAddCategory, selectedCategories, onToggle
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 md:space-y-12">
       <div className="text-center relative">
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="w-48 h-48 md:w-64 md:h-64 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
         <div className="relative z-10">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent mb-3 md:mb-4">
             Plan Your Perfect Trip
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
             Discover amazing destinations and create unforgettable memories with our intelligent travel planning
           </p>
-          <div className="flex items-center justify-center space-x-6 mt-6">
+          <div className="flex items-center justify-center space-x-4 md:space-x-6 mt-4 md:mt-6 flex-wrap gap-2">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-gray-600">AI-Powered</span>
+              <span className="text-gray-600 text-sm md:text-base">AI-Powered</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse delay-300"></div>
-              <span className="text-gray-600">Personalized</span>
+              <span className="text-gray-600 text-sm md:text-base">Personalized</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse delay-500"></div>
-              <span className="text-gray-600">Sustainable</span>
+              <span className="text-gray-600 text-sm md:text-base">Sustainable</span>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
         {predefinedOptions.map((option, index) => (
           <OptionCard
             key={index}
@@ -437,11 +470,11 @@ const Options = ({ customCategories, onAddCategory, selectedCategories, onToggle
       />
       
       {customCategories.length > 0 && (
-        <div className="space-y-6">
-          <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+        <div className="space-y-4 md:space-y-6">
+          <h3 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Your Custom Adventures
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {customCategories.map((category) => (
               <OptionCard
                 key={category.id}
@@ -463,6 +496,7 @@ const Options = ({ customCategories, onAddCategory, selectedCategories, onToggle
 
 const App = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [customCategories, setCustomCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -472,6 +506,10 @@ const App = () => {
 
   const handleCloseDropdown = () => {
     setShowUserDropdown(false);
+  };
+
+  const handleToggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handleAddCategory = (category) => {
@@ -499,19 +537,35 @@ const App = () => {
     };
   }, [showUserDropdown]);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutsideMobile = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('nav')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideMobile);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideMobile);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute top-1/2 right-0 w-80 h-80 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div className="absolute top-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute top-1/2 right-0 w-48 h-48 md:w-80 md:h-80 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute bottom-0 left-1/3 w-40 h-40 md:w-64 md:h-64 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
       
       <Navbar
         onUserClick={handleUserClick}
         showDropdown={showUserDropdown}
         onCloseDropdown={handleCloseDropdown}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onToggleMobileMenu={handleToggleMobileMenu}
       />
       
-      <main className="container mx-auto px-6 py-8 pt-28 relative z-10">
+      <main className="container mx-auto px-4 sm:px-6 py-6 md:py-8 pt-24 md:pt-28 relative z-10">
         <Options
           customCategories={customCategories}
           onAddCategory={handleAddCategory}
@@ -520,19 +574,19 @@ const App = () => {
         />
         
         {selectedCategories.length > 0 && (
-          <div className="mt-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-8 text-white shadow-2xl">
-            <div className="flex items-center space-x-3 mb-4">
-              <Star className="text-yellow-300" size={24} />
-              <h4 className="text-2xl font-bold">Your Trip Planning Progress</h4>
+          <div className="mt-8 md:mt-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 text-white shadow-2xl">
+            <div className="flex items-center space-x-2 md:space-x-3 mb-3 md:mb-4">
+              <Star className="text-yellow-300 w-5 h-5 md:w-6 md:h-6" />
+              <h4 className="text-lg md:text-xl lg:text-2xl font-bold">Your Trip Planning Progress</h4>
             </div>
-            <p className="text-emerald-100 mb-4">
+            <p className="text-emerald-100 mb-3 md:mb-4 text-sm md:text-base">
               You've selected {selectedCategories.length} categories for your adventure!
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1 md:gap-2">
               {selectedCategories.map((category, index) => (
                 <span
                   key={index}
-                  className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium"
+                  className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-xs md:text-sm font-medium"
                 >
                   {category}
                 </span>
@@ -542,24 +596,24 @@ const App = () => {
         )}
       </main>
 
-      <footer className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white py-12 mt-16 relative overflow-hidden">
+      <footer className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white py-8 md:py-12 mt-12 md:mt-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Globe className="text-emerald-400" size={24} />
-            <span className="text-2xl font-bold">Tripo</span>
+        <div className="container mx-auto px-4 sm:px-6 text-center relative z-10">
+          <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
+            <Globe className="text-emerald-400 w-5 h-5 md:w-6 md:h-6" />
+            <span className="text-xl md:text-2xl font-bold">Tripo</span>
           </div>
-          <p className="text-emerald-200 text-lg">
+          <p className="text-emerald-200 text-sm md:text-base lg:text-lg">
             © 2025 Tripo - Discover the world sustainably, one adventure at a time
           </p>
-          <div className="flex items-center justify-center space-x-6 mt-4">
-            <div className="flex items-center space-x-2">
-              <Heart className="text-pink-400 fill-current" size={16} />
-              <span className="text-emerald-300 text-sm">Made with love</span>
+          <div className="flex items-center justify-center space-x-4 md:space-x-6 mt-3 md:mt-4 flex-wrap gap-2">
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <Heart className="text-pink-400 fill-current w-3 h-3 md:w-4 md:h-4" />
+              <span className="text-emerald-300 text-xs md:text-sm">Made with love</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <TreePine className="text-green-400" size={16} />
-              <span className="text-emerald-300 text-sm">Eco-friendly travel</span>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <TreePine className="text-green-400 w-3 h-3 md:w-4 md:h-4" />
+              <span className="text-emerald-300 text-xs md:text-sm">Eco-friendly travel</span>
             </div>
           </div>
         </div>
