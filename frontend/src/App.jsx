@@ -29,7 +29,7 @@ function App() {
         <Route path="/Hotels" element={<ProtectedRoute><Hotels /></ProtectedRoute>} />
         <Route path="/Transportation" element={<ProtectedRoute><Transp /></ProtectedRoute>} />
         <Route path="/Activities" element={<ProtectedRoute><Activ /></ProtectedRoute>} />
-        <Route path="/TripoWrap" element={<TripoWrap />}/>
+        <Route path="/TripoWrap" element={<ProtectedRoute><TripoWrap /></ProtectedRoute>}/>
         <Route path="/custom" element={<ProtectedRoute><Custom /></ProtectedRoute>} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/User" element={<ProtectedRoute><User /></ProtectedRoute>} />
