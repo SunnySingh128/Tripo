@@ -12,8 +12,7 @@ let otpStore = {}; // { "phonenumber": { otp:123456, expiry:Date } }
 
 router.post('/send-otp', (req, res) => {
     const { phone, email } = req.body;
-    console.log(req.body);
-
+ console.log("sending otp");
     if (!phone || !email) {
         return res.status(400).send("Phone and email are required");
     }
@@ -52,7 +51,7 @@ router.post('/send-otp', (req, res) => {
 
 router.post('/verify-otp', (req, res) => {
     const { phone, otp } = req.body;
-
+   console.log("checking otp");
     if (!phone || !otp) {
         return res.status(400).send("Phone and OTP are required");
     }

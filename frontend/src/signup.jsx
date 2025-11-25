@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { useAuth } from './auth.jsx';
-const api=import.meta.env.VITE_AP1_URL;
 const OTPLoginSystem = () => {
+  const api=import.meta.env.VITE_AP1_URL;
   const [showPopup, setShowPopup] = useState(false);
   const [currentStep, setCurrentStep] = useState('login'); // 'login', 'otp', 'success'
   const [formData, setFormData] = useState({
@@ -39,7 +39,6 @@ const OTPLoginSystem = () => {
     }));
     setError('');
   };
-const api=import.meta.env.VITE_AP1_URL;
   // Handle login form submission
   const handleLoginSubmit = async () => {
     setLoading(true);
