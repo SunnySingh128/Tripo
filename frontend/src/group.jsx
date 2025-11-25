@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Plane, MapPin, Users, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plane, MapPin, Users, Send, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
 const api=import.meta.env.VITE_AP1_URL;
+
 const GroupTripPlanner = () => {
   const [formData, setFormData] = useState({
     groupName: '',
     totalMembers: '',
     friendsNames: [],
-    destination: ''
+    destination: '',
+    password: ''
   });
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('');
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     // Fade in animation on component mount
@@ -51,6 +54,10 @@ const GroupTripPlanner = () => {
     }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const validateForm = () => {
     const newErrors = {};
     
@@ -65,6 +72,12 @@ const GroupTripPlanner = () => {
     if (!formData.destination.trim()) {
       newErrors.destination = 'Destination is required';
     }
+
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
     
     formData.friendsNames.forEach((name, index) => {
       if (!name.trim()) {
@@ -75,56 +88,57 @@ const GroupTripPlanner = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-const navigate=useNavigate();
-const handleSubmit = async () => {
-  if (!validateForm()) {
-    return;
-  }
 
-  setIsSubmitting(true);
-  setSubmitStatus('');
+  const navigate = useNavigate();
 
-  try {
-    localStorage.setItem("groupName", formData.groupName);
-    const response = await fetch(`${api}/api/store`, { // updated port
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
 
-      body: JSON.stringify({
-        groupName: formData.groupName,
-        friends: formData.friendsNames, // schema key
-        place: formData.destination // schema key
-      })
-    });
+    setIsSubmitting(true);
+    setSubmitStatus('');
 
-    if (response.ok) {
-      setSubmitStatus('success');
-
-      // Reset foam before navigating
-      setFormData({
-        groupName: '',
-        totalMembers: '',
-        friendsNames: [],
-        destination: ''
+    try {
+      localStorage.setItem("groupName", formData.groupName);
+      const response = await fetch(`${api}/api/store`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          groupName: formData.groupName,
+          friends: formData.friendsNames,
+          place: formData.destination,
+          password: formData.password // Added password to the request
+        })
       });
 
-      navigate("/Home", { state: { name: formData.groupName } });
-    }else {
-      const errorData = await response.json();
-      console.error('Backend error:', errorData);
-      throw new Error(errorData.error || errorData.message || 'Failed to submit');
+      if (response.ok) {
+        setSubmitStatus('success');
+
+        // Reset form before navigating
+        setFormData({
+          groupName: '',
+          totalMembers: '',
+          friendsNames: [],
+          destination: '',
+          password: ''
+        });
+
+        navigate("/Home", { state: { name: formData.groupName } });
+      } else {
+        const errorData = await response.json();
+        console.error('Backend error:', errorData);
+        throw new Error(errorData.error || errorData.message || 'Failed to submit');
+      }
+    } catch (error) {
+      console.error('Submission error:', error.message);
+      setSubmitStatus(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-  }catch (error) {
-    console.error('Submission error:', error.message);
-    setSubmitStatus(error.message); // Set error message to display in UI
-  }finally {
-    setIsSubmitting(false);
-  }
-};
-
-
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-emerald-50 to-green-200 p-4 flex items-center justify-center relative overflow-hidden">
@@ -196,6 +210,7 @@ const handleSubmit = async () => {
         <div className="absolute bottom-40 left-1/5 w-2.5 h-2.5 bg-emerald-300 rounded-full animate-[twinkle_5s_ease-in-out_infinite_2s] opacity-40"></div>
         <div className="absolute bottom-24 right-2/5 w-1 h-1 bg-green-600 rounded-full animate-[twinkle_3.5s_ease-in-out_infinite_0.5s] opacity-55"></div>
       </div>
+      
       <div className={`w-full max-w-lg transition-all duration-1000 transform ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
@@ -213,13 +228,13 @@ const handleSubmit = async () => {
 
         {/* Error Message */}
         {submitStatus && submitStatus !== 'success' && (
-  <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
-    <AlertCircle className="text-red-600 w-6 h-6" />
-    <div>
-      <p className="text-red-800 font-medium">{submitStatus}</p>
-      <p className="text-red-600 text-sm">Please try again later</p>
-    </div>
-  </div>
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
+            <AlertCircle className="text-red-600 w-6 h-6" />
+            <div>
+              <p className="text-red-800 font-medium">{submitStatus}</p>
+              <p className="text-red-600 text-sm">Please try again later</p>
+            </div>
+          </div>
         )}
 
         {/* Main Form Container */}
@@ -345,6 +360,38 @@ const handleSubmit = async () => {
               {errors.destination && (
                 <p className="text-red-500 text-sm">{errors.destination}</p>
               )}
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Set Password for Group *
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 pr-12 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                    errors.password ? 'border-red-300' : 'border-gray-200 focus:border-emerald-500'
+                  }`}
+                  placeholder="Enter a secure password"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Password must be at least 6 characters long
+              </p>
             </div>
 
             {/* Submit Button */}

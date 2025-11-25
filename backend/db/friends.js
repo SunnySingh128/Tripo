@@ -6,6 +6,11 @@ const groupSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  password:{
+    type:String,
+    required:true,
+    trim:true
+  },
   friends: {
     type: [String], // Array of strings for dynamic friends names
     required: true,

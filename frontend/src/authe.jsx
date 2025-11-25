@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, User, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { Users, Lock, ArrowRight, AlertCircle, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from './auth.jsx';
 const api=import.meta.env.VITE_AP1_URL;
+
 export default function SimpleGroupForm() {
   const [formData, setFormData] = useState({
     groupName: '',
-    username: ''
+    password: ''
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFocused, setIsFocused] = useState({
     groupName: false,
-    username: false
+    password: false
   });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // Realistic green color theme
@@ -50,11 +52,15 @@ export default function SimpleGroupForm() {
     setIsFocused(prev => ({ ...prev, [field]: false }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const { setIsAuthenticated } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.groupName.trim() || !formData.username.trim()) {
+    if (!formData.groupName.trim() || !formData.password.trim()) {
       setError('Both fields are required');
       return;
     }
@@ -70,18 +76,19 @@ export default function SimpleGroupForm() {
         },
         body: JSON.stringify({
           groupName: formData.groupName,
+          password: formData.password
         })
       });
 
       const data = await response.json();
       console.log(data);
 
-      if (response.ok) {
+      if (response.ok && data.message === "Login successful") {
         localStorage.setItem("groupName", formData.groupName);
         setIsAuthenticated(true);
         navigate("/Home", { state: { name: formData.groupName } });
       } else {
-        setError(data.message || 'Group does not exist');
+        setError(data.error || 'Authentication failed');
         GoBack();
       }
     } catch (err) {
@@ -151,25 +158,34 @@ export default function SimpleGroupForm() {
             )}
           </div>
 
-          {/* Username Field */}
+          {/* Password Field */}
           <div className="relative">
             <label className="block text-white/90 font-medium mb-2">
-              <User className={`w-5 h-5 inline mr-2 ${colors.icon} transition-transform ${isFocused.username ? 'scale-110' : ''}`} />
-              Username
+              <Lock className={`w-5 h-5 inline mr-2 ${colors.icon} transition-transform ${isFocused.password ? 'scale-110' : ''}`} />
+              Password
             </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              onFocus={() => handleFocus('username')}
-              onBlur={() => handleBlur('username')}
-              className={`w-full p-3 rounded-lg bg-black/20 backdrop-blur-sm border ${colors.input} text-white placeholder-gray-400/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 transition-all duration-300 ${
-                isFocused.username ? 'ring-2 ring-emerald-300/30 ' + colors.glow : ''
-              }`}
-              placeholder="Choose your username"
-            />
-            {isFocused.username && (
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                onFocus={() => handleFocus('password')}
+                onBlur={() => handleBlur('password')}
+                className={`w-full p-3 pr-12 rounded-lg bg-black/20 backdrop-blur-sm border ${colors.input} text-white placeholder-gray-400/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 transition-all duration-300 ${
+                  isFocused.password ? 'ring-2 ring-emerald-300/30 ' + colors.glow : ''
+                }`}
+                placeholder="Enter group password"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-emerald-300 transition-colors duration-200"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {isFocused.password && (
               <div className="absolute bottom-0 left-0 h-px bg-gradient-to-r from-emerald-400/0 via-emerald-400/80 to-emerald-400/0 w-full"></div>
             )}
           </div>
@@ -196,7 +212,7 @@ export default function SimpleGroupForm() {
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <>
-                <span>Go to Dashboard</span>
+                <span>Login to Group</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </>
             )}

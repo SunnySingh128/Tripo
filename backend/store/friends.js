@@ -3,7 +3,7 @@ const Group=require("../db/friends.js")
 // Function to store group data
 const storedata = async (req, res) => {
   try {
-    const { groupName, friends, place } = req.body;
+    const { groupName,password, friends, place } = req.body;
 
     // Check if group with the same name already exists
     const existingGroup = await Group.findOne({ groupName });
@@ -15,6 +15,7 @@ const storedata = async (req, res) => {
     // If not exists, create and save
     const newGroup = new Group({
       groupName,
+      password,
       friends,
       place
     });
@@ -101,14 +102,33 @@ console.log(payerName,groupName);
     });
   }
 }
-async function checkExistsGroup(req,res){
-  const {groupName}=req.body;
-   const group = await Group.findOne({ groupName });
-      //  const isFriend = group.friends.includes(payerName);
-    if(!group ){
-          return res.status(400).json({ error: "Group not exists" });
-    }else{
-      return res.status(200).json({res1:"successfull"});
+async function checkExistsGroup(req, res) {
+  try {
+    const { groupName, password } = req.body;
+console.log(groupName,password);
+    // Check if fields are missing
+    if (!groupName || !password) {
+      return res.status(400).json({ error: "Group name and password are required" });
     }
+
+    // Check if group exists
+    const group = await Group.findOne({ groupName });
+
+    if (!group) {
+      return res.status(400).json({ error: "Group not exists" });
+    }
+
+    // Match password
+    if (Number(group.password) !== Number(password)) {
+      return res.status(400).json({ error: "Incorrect password" });
+    }
+
+    // Success
+    return res.status(200).json({ message: "Login successful", group });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }
+
 module.exports = { storedata, getdata, getMembers,checkFriendExists,checkExistsGroup };
