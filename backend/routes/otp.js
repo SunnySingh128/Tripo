@@ -4,13 +4,15 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const secret = 'jai shree'; // Store securely in .env
+// Store securely in .env
+const secret = 'jai shree'; 
 dotenv.config();
 
 router.use(bodyParser.json());
 let otpStore = {}; // { "phonenumber": { otp:123456, expiry:Date } }
 
 router.post('/send-otp', (req, res) => {
+    try{
     const { phone, email } = req.body;
  console.log("sending otp");
     if (!phone || !email) {
@@ -47,6 +49,11 @@ router.post('/send-otp', (req, res) => {
             res.send("OTP sent successfully");
         }
     });
+    }catch(err){
+        console.log(err);
+        res.status(500).send("Error sending OTP");
+    }
+
 });
 
 router.post('/verify-otp', (req, res) => {
