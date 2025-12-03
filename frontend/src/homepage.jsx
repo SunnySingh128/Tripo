@@ -148,7 +148,7 @@ const UserDropdown = ({ onClose, isMobile = false }) => {
 
   const sessionexpires = (action) => {
     if (action === "Logout") {
-      navigate("/signup");
+      navigate("/Auth");
       onClose();
     }
   };

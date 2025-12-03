@@ -69,7 +69,7 @@ export default function SimpleGroupForm() {
     setError('');
 
     try {
-      const response = await fetch(`${api}/api/check`, {
+      const response = await fetch(`${api}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

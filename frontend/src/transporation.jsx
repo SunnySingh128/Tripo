@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, User, DollarSign, Car, Plane, Train, Bus, Bike, Navigation, Code2, GitBranch, Database, XCircle } from 'lucide-react';
-const api=import.meta.env.VITE_AP1_URL;
+const api = import.meta.env.VITE_AP1_URL
 const TransportationPaymentForm = () => {
   const [formData, setFormData] = useState({
     payerName: '',
@@ -9,10 +9,8 @@ const TransportationPaymentForm = () => {
   
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-const [friendError, setFriendError] = useState("");
-const [showSuccess, setShowSuccess] = useState(false);
-
-
+  const [friendError, setFriendError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,96 +28,96 @@ const [showSuccess, setShowSuccess] = useState(false);
     }
   };
 
-const validateForm = async () => {
-  const newErrors = {};
-  setFriendError("");
-  setShowSuccess(false); // Reset success state
+  const validateForm = async () => {
+    const newErrors = {};
+    setFriendError("");
+    setShowSuccess(false); // Reset success state
 
-  const payerName = formData.payerName?.trim();
-  const groupName = localStorage.getItem("groupName");
+    const payerName = formData.payerName?.trim();
+    const groupName = localStorage.getItem("groupName");
 
-  if (!payerName) {
-    newErrors.payerName = "Payer name is required";
-  }
-
-  if (!formData.amount || parseFloat(formData.amount) <= 0) {
-    newErrors.amount = "Valid amount is required";
-  }
-
-  if (!newErrors.payerName && groupName) {
-    try {
-      const response = await fetch(`{api}/api/checkFriend`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ payerName, groupName })
-      });
-
-      const data = await response.json();
-      console.log("Server response:", data.message);
-
-      if (!data.success) {
-        setFriendError(data.message);
-        setShowSuccess(false); // Don't show success
-      } else {
-        setShowSuccess(true);  // Friend is valid, show success
-        setFriendError("");    // Clear friend error
-      }
-
-    } catch (error) {
-      console.error("Server error:", error);
-      setFriendError("Unable to verify friend. Try again later.");
-      setShowSuccess(false);
+    if (!payerName) {
+      newErrors.payerName = "Payer name is required";
     }
-  }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0 && !friendError;
-};
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      newErrors.amount = "Valid amount is required";
+    }
 
+    if (!newErrors.payerName && groupName) {
+      try {
+        const response = await fetch(`${api}/api/checkFriend`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ payerName, groupName })
+        });
 
+        const data = await response.json();
+        console.log("Server response:", data.message);
 
+        if (!data.success) {
+          setFriendError(data.message);
+          setShowSuccess(false); // Don't show success
+        } else {
+          setShowSuccess(true);  // Friend is valid, show success
+          setFriendError("");    // Clear friend error
+        }
+
+      } catch (error) {
+        console.error("Server error:", error);
+        setFriendError("Unable to verify friend. Try again later.");
+        setShowSuccess(false);
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0 && !friendError;
+  };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
-        const groupName = localStorage.getItem("groupName");
+    if (!await validateForm()) return;
+    
+    const groupName = localStorage.getItem("groupName");
 
-// Prepare the data to send including group name
-const requestData = {
-  ...formData,  // Spread the existing form data
-  groupName: groupName  // Add the group name
-};
-            fetch(`${api}/api/amount`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    })
-    .then(response => {
+    // Prepare the data to send including group name and activity name
+    const requestData = {
+      ...formData,  // Spread the existing form data
+      groupName: groupName,  // Add the group name
+      activityName: "Transportation"  // Add the activity name
+    };
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch(`${api}/api/amount`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+      
       if (!response.ok) {
         throw new Error('Failed to save activity');
       }
-      return response.json();
-    })
-    .then(data => {
+      
+      const data = await response.json();
       console.log('Activity saved:', data);
-    })
-    .catch(error => {
+      
+      setShowSuccess(true);
+      setFormData({ payerName: '', amount: '' });
+      
+      // Hide success message after 4 seconds
+      setTimeout(() => setShowSuccess(false), 4000);
+      
+    } catch (error) {
       console.error('Error:', error);
-    });
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setShowSuccess(true);
-    setFormData({ payerName: '', amount: '' });
-    setIsSubmitting(false);
-    
-    // Hide success message after 4 seconds
-    setTimeout(() => setShowSuccess(false), 4000);
+      setFriendError("Failed to submit payment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -172,24 +170,23 @@ const requestData = {
           <p className="text-gray-300 text-lg">Development Environment | Energy Optimized v2.1.0</p>
         </div>
 
-{showSuccess && !friendError && (
-  <div className="mb-8 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-5 rounded-xl shadow-xl animate-transport-arrival">
-    <div className="flex items-center">
-      <Check className="mr-3 animate-transport-delivered" size={24} />
-      <span className="font-semibold text-lg">Friend exists in the group successfully!</span>
-    </div>
-  </div>
-)}
+        {showSuccess && !friendError && (
+          <div className="mb-8 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-5 rounded-xl shadow-xl animate-transport-arrival">
+            <div className="flex items-center">
+              <Check className="mr-3 animate-transport-delivered" size={24} />
+              <span className="font-semibold text-lg">Payment submitted successfully!</span>
+            </div>
+          </div>
+        )}
 
-{friendError && !showSuccess && (
-  <div className="mb-8 bg-gradient-to-r from-red-500 to-rose-500 text-white p-5 rounded-xl shadow-xl animate-transport-arrival">
-    <div className="flex items-center">
-      <XCircle className="mr-3 animate-shake" size={24} />
-      <span className="font-semibold text-lg">{friendError}</span>
-    </div>
-  </div>
-)}
-
+        {friendError && (
+          <div className="mb-8 bg-gradient-to-r from-red-500 to-rose-500 text-white p-5 rounded-xl shadow-xl animate-transport-arrival">
+            <div className="flex items-center">
+              <XCircle className="mr-3 animate-shake" size={24} />
+              <span className="font-semibold text-lg">{friendError}</span>
+            </div>
+          </div>
+        )}
 
         {/* Form Container */}
         <div className="bg-gray-800/95 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-green-400/30 animate-slide-up">
@@ -375,6 +372,12 @@ const requestData = {
           to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        
         .animate-transport-drive {
           animation: transport-drive 4s ease-in-out infinite;
         }
@@ -437,6 +440,10 @@ const requestData = {
         
         .animate-slide-up {
           animation: slide-up 0.8s ease-out;
+        }
+        
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
         }
       `}</style>
     </div>

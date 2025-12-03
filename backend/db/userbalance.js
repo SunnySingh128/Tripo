@@ -1,7 +1,5 @@
-// 1. Import mongoose
 const mongoose = require('mongoose');
 
-// 2. Define schema
 const userBalanceSchema = new mongoose.Schema({
   groupName: {
     type: String,
@@ -11,25 +9,40 @@ const userBalanceSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
     trim: true
   },
-  totalPaid: {
-    type: Number,
-    default: 0
-  },
-  totalOwed: {
-    type: Number,
-    default: 0
-  },
-  latestActivityName: {
-    type: String,
-    default: ''
-  }
+activities: [
+    {
+      activityName: String,
+      amount: Number,
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
+  totalPaid: { type: Number, default: 0 },
+  totalOwed: { type: Number, default: 0 },
+
+  // This user owes money to other users
+  givesTo: [
+    {
+      friendName: String,
+      amount: Number,
+      activityName: String
+    }
+  ],
+
+  // Other users owe money to this user
+  getsFrom: [
+    {
+      friendName: String,
+      amount: Number,
+      activityName: String
+    }
+  ],
+
+  latestActivityName: { type: String, default: '' }
 });
 
-// 3. Create model
-const UserBalance = mongoose.model('UserBalance', userBalanceSchema);
-
-// 4. Export the model
-module.exports = UserBalance;
+module.exports = mongoose.model('UserBalance', userBalanceSchema);
