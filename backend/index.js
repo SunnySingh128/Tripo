@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 const cors = require('cors');
 const path=require("path");
 app.use(cors({
-  origin: "https://tripo-six.vercel.app",            // Allow all origins
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allow all methods
   allowedHeaders: ["*"],  // Allow all headers
 }));
