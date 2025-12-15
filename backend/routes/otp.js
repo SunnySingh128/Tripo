@@ -95,7 +95,7 @@ router.post("/verify-otp", (req, res) => {
   if (parseInt(otp) === otpStore[phone].otp) {
     delete otpStore[phone];
 
-    const token = jwt.sign({ phone }, secret, { expiresIn: "2h" });
+    const token = jwt.sign({ phone }, process.env.SECRET, { expiresIn: "2h" });
 
     return res.json({ success: true, token });
   } else {
