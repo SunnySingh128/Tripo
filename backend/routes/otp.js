@@ -1,86 +1,106 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
-// Store securely in .env
-const secret = 'jai shree'; 
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
 dotenv.config();
 
-router.use(bodyParser.json());
-let otpStore = {}; // { "phonenumber": { otp:123456, expiry:Date } }
+// Brevo SDK
+const Brevo = require("@getbrevo/brevo");
 
-router.post('/send-otp', (req, res) => {
-    try{
+const secret = process.env.SECRET;
+
+router.use(bodyParser.json());
+
+let otpStore = {};
+// Format: { "phone": { otp:123456, expiry:Date } }
+
+// Initialize Brevo API
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.API_KEY // Your SMTP API key
+);
+// SEND OTP
+router.post("/send-otp", async (req, res) => {
+  try {
     const { phone, email } = req.body;
- console.log("sending otp");
+
     if (!phone || !email) {
-        return res.status(400).send("Phone and email are required");
+      return res.status(400).send("Phone and email are required");
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000);
+    console.log("Sending OTP...");
 
-    // Save OTP with expiry 5 mins
+    const otp = Math.floor(100000 + Math.random() * 900000);
     otpStore[phone] = { otp, expiry: Date.now() + 5 * 60 * 1000 };
 
-    // Setup Nodemailer transport
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-        }
-    });
+    // Create email structure
+     let apiInstance = new Brevo.TransactionalEmailsApi();
+     
+     let apiKey = apiInstance.authentications["apiKey"];
+     apiKey.apiKey = process.env.API_KEY; // Store this in .env
 
-    const mailOptions = {
-        from: process.env.EMAIL,
-        to: email,
-        subject: 'Your Tripo Verification Code',
-        text: `Your OTP verification code is: ${otp}`
-    };
+     console.log(process.env.API_KEY)
+     
+     let sendSmtpEmail = new Brevo.SendSmtpEmail();
+     
+     sendSmtpEmail.subject = "My Test Email";
+     sendSmtpEmail.htmlContent =
+     "<html><body><h1>" + otp +"</h1></body></html>";
+     sendSmtpEmail.sender = { name: "My App", email: process.env.EMAIL }; // Must match the email you verified!
+     sendSmtpEmail.to = [
+         { email: email, name: "sunny" },
+        ];
+        
+    
+    apiInstance.sendTransacEmail(sendSmtpEmail)
+    .then(function (data) {
+      console.log("API called successfully. Returned data: ");
+    })
+    .catch(err =>{
+        console.log(err.message)
+    })
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(500).send("Error sending OTP");
-        } else {
-            res.send("OTP sent successfully");
-        }
-    });
-    }catch(err){
-        console.log(err);
-        res.status(500).send("Error sending OTP");
-    }
-
+    return res.send("OTP sent successfully");
+  } catch (err) {
+    console.error("Brevo Error:");
+    return res
+      .status(500)
+      .send(
+        "Error sending OTP. Please check your SMTP API key and sender email."
+      );
+  }
 });
 
-router.post('/verify-otp', (req, res) => {
-    const { phone, otp } = req.body;
-   console.log("checking otp");
-    if (!phone || !otp) {
-        return res.status(400).send("Phone and OTP are required");
-    }
+// VERIFY OTP
+router.post("/verify-otp", (req, res) => {
+  const { phone, otp } = req.body;
 
-    if (!otpStore[phone]) {
-        return res.status(400).send("OTP not requested");
-    }
+  if (!phone || !otp) {
+    return res.status(400).send("Phone and OTP are required");
+  }
 
-    // Check expiry
-    if (Date.now() > otpStore[phone].expiry) {
-        delete otpStore[phone];
-        return res.status(400).send("OTP expired");
-    }
+  if (!otpStore[phone]) {
+    return res.status(400).send("OTP not requested");
+  }
 
-    // Verify OTP
-    if (parseInt(otp) === otpStore[phone].otp) {
-        delete otpStore[phone];
-           const token = jwt.sign({ phone }, secret, { expiresIn: '2h' });
+  console.log("Checking OTP...");
+
+  if (Date.now() > otpStore[phone].expiry) {
+    delete otpStore[phone];
+    return res.status(400).send("OTP expired");
+  }
+
+  if (parseInt(otp) === otpStore[phone].otp) {
+    delete otpStore[phone];
+
+    const token = jwt.sign({ phone }, secret, { expiresIn: "2h" });
+
     return res.json({ success: true, token });
-    } else {
-        res.status(400).send("Invalid OTP");
-    }
+  } else {
+    return res.status(400).send("Invalid OTP");
+  }
 });
 
 module.exports = router;

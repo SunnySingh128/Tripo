@@ -2,163 +2,155 @@ const UserBalance = require('../db/userbalance');
 const GroupStats = require('../db/GroupAmount');
 const Group = require('../db/friends');
 async function storeUserContribution(req, res) {
-  const { payerName, amount, activityName, groupName, selectedFriends,customSplit } = req.body;
+  const { payerName, amount, activityName, groupName, selectedFriends, customSplit } = req.body;
   const totalAmount = parseFloat(amount);
-   console.log(customSplit);
+
   try {
-    let members = [];
 
     // -----------------------------------------
     // CASE 1 → selectedFriends provided
-if (Array.isArray(selectedFriends) && selectedFriends.length > 0) {
-  console.log(selectedFriends)
- for (const friend of selectedFriends) {
-    const friendName = friend.name;
-    const amount = parseFloat(friend.amount);
-    console.log(friendName, amount,activityName)
-if (!friendName || isNaN(amount)) continue;
+    // -----------------------------------------
+    if (Array.isArray(selectedFriends) && selectedFriends.length > 0) {
 
-const res = await UserBalance.updateOne(
-  { groupName, name: friendName },
-  {
-    $inc: { totalPaid: amount },
+      for (const friend of selectedFriends) {
+        const friendName = friend.name;
+        const amt = parseFloat(friend.amount);
 
-    // Always push activity
-    $push: {
-      activities: {
-        activityName,
-        amount,
-        date: Date.now(),
+        if (!friendName || isNaN(amt)) continue;
+
+        await UserBalance.updateOne(
+          { groupName, name: friendName },
+          {
+            $inc: { totalPaid: amt },
+            $push: {
+              activities: {
+                activityName,
+                amount: amt,
+                date: Date.now(),
+              }
+            },
+            $setOnInsert: {
+              totalOwed: 0,
+              givesTo: [],
+              getsFrom: [],
+              latestActivityName: ""
+            }
+          },
+          { upsert: true }
+        );
       }
-    },
 
-    // Set only when inserting a new doc
-    $setOnInsert: {
-      totalOwed: 0,
-      givesTo: [],
-      getsFrom: [],
-      latestActivityName: ""
+      return res.status(200).json({
+        message: "Split stored successfully!",
+        mode: "selectedFriends"
+      });
     }
-  },
-  { upsert: true }
-);
-  }
-  return     res.status(200).json({message: "Split stored successfully!",}) // done processing selectedFriends
-}else if (Array.isArray(customSplit) && customSplit.length > 0) {
-  console.log(customSplit, payerName);
-
-  const groupData = await Group.findOne({ groupName });
-  if (!groupData) {
-    return res.status(404).json({ error: "Group not found" });
-  }
-
-  let members = [...groupData.friends];
-
-  // Add payer if not part of group
-  if (!members.includes(payerName)) {
-    members.push(payerName);
-  }
-
-  members = members.filter(name => name && name.trim() !== "");
-  console.log("Split Logic:", { members });
-
-  // 1️⃣ PROCESS CUSTOM SPLIT
-  for (const entry of customSplit) {
-    const friendName = entry.name;
-    const amount = entry.amount;
-
-    if (friendName !== payerName && amount > 0) {
-
-      // Friend gives money to PAYER
-      await UserBalance.findOneAndUpdate(
-        { groupName, name: friendName },
-        {
-          $push: { givesTo: { friendName: payerName, amount, activityName } },
-          $inc: { totalOwed: amount },
-          $set: { latestActivityName: activityName }
-        },
-        { upsert: true }
-      );
-
-      // Payer gets money FROM friend
-      await UserBalance.findOneAndUpdate(
-        { groupName, name: payerName },
-        {
-          $push: { getsFrom: { friendName, amount, activityName } },
-          $set: { latestActivityName: activityName }
-        },
-        { upsert: true }
-      );
-
-    }
-  }
-
-  // 2️⃣ Update payer’s totalPaid
-  await UserBalance.findOneAndUpdate(
-    { groupName, name: payerName },
-    { $inc: { totalPaid: totalAmount } },
-    { upsert: true }
-  );
-
-  // 3️⃣ Update Group Total
-  await GroupStats.findOneAndUpdate(
-    { groupName },
-    { $inc: { totalGroupAmount: totalAmount } },
-    { upsert: true }
-  );
-
-  return res.status(200).json({
-    message: "Custom split stored successfully!",
-    splitAmong: members
-  });
-}
-
 
     // -----------------------------------------
-    // CASE 2 → fetch all members from GROUP MODEL
+    // CASE 2 → customSplit provided
     // -----------------------------------------
-    else {
+    if (Array.isArray(customSplit) && customSplit.length > 0) {
+
       const groupData = await Group.findOne({ groupName });
-
       if (!groupData) {
         return res.status(404).json({ error: "Group not found" });
       }
 
-      members = [...groupData.friends];
-         
-      // Include payer if not already in group
+      let members = [...groupData.friends];
+
       if (!members.includes(payerName)) {
         members.push(payerName);
       }
+
+      members = members.filter(n => n && n.trim() !== "");
+
+      // 1️⃣ Process individual custom split entries
+      for (const entry of customSplit) {
+        const friendName = entry.name;
+        const amt = entry.amount;
+
+        if (friendName !== payerName && amt > 0) {
+
+          // Friend → Pays to payer
+          await UserBalance.findOneAndUpdate(
+            { groupName, name: friendName },
+            {
+              $push: { givesTo: { friendName: payerName, amount: amt, activityName } },
+              $inc: { totalOwed: amt },
+              $set: { latestActivityName: activityName }
+            },
+            { upsert: true }
+          );
+
+          // Payer receives
+          await UserBalance.findOneAndUpdate(
+            { groupName, name: payerName },
+            {
+              $push: { getsFrom: { friendName, amount: amt, activityName } },
+              $set: { latestActivityName: activityName }
+            },
+            { upsert: true }
+          );
+        }
+      }
+
+      // 2️⃣ Add to payer's totalPaid
+      await UserBalance.findOneAndUpdate(
+        { groupName, name: payerName },
+        { $inc: { totalPaid: totalAmount } },
+        { upsert: true }
+      );
+
+      // 3️⃣ Add to group stats
+      await GroupStats.findOneAndUpdate(
+        { groupName },
+        { $inc: { totalGroupAmount: totalAmount } },
+        { upsert: true }
+      );
+
+      return res.status(200).json({
+        message: "Custom split stored successfully!",
+        members,
+        mode: "customSplit"
+      });
     }
 
-    // Remove empty names
-    members = members.filter(names => names && names.trim() !== "");
+    // -----------------------------------------
+    // CASE 3 → Equal Split (default)
+    // -----------------------------------------
+    const groupData = await Group.findOne({ groupName });
+
+    if (!groupData) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    let members = [...groupData.friends];
+
+    if (!members.includes(payerName)) {
+      members.push(payerName);
+    }
+
+    members = members.filter(n => n && n.trim() !== "");
 
     const perPersonAmount = totalAmount / members.length;
 
-    console.log("Split Logic:", { members, perPersonAmount });
-
-    // --------------------------------------------------------
-    // 1️⃣ UPDATE givesTo and getsFrom
-    // --------------------------------------------------------
+    // Money flow
     for (let friend of members) {
       if (friend !== payerName) {
-        // Friend gives to payer
+
         await UserBalance.findOneAndUpdate(
           { groupName, name: friend },
           {
-            $push: { givesTo: { friendName: payerName, amount: perPersonAmount,activityName: activityName } },
+            $push: { givesTo: { friendName: payerName, amount: perPersonAmount, activityName } },
             $set: { latestActivityName: activityName }
           },
           { upsert: true }
         );
 
-        // Payer gets from friend
         await UserBalance.findOneAndUpdate(
           { groupName, name: payerName },
           {
-            $push: { getsFrom: { friendName: friend, amount: perPersonAmount,activityName: activityName } },
+            $push: { getsFrom: { friendName: friend, amount: perPersonAmount, activityName } },
             $set: { latestActivityName: activityName }
           },
           { upsert: true }
@@ -166,33 +158,29 @@ const res = await UserBalance.updateOne(
       }
     }
 
-    // --------------------------------------------------------
-    // 2️⃣ Update payer totalPaid
-    // --------------------------------------------------------
+    // Payer paid full amount
     await UserBalance.findOneAndUpdate(
       { groupName, name: payerName },
       { $inc: { totalPaid: totalAmount } },
       { upsert: true }
     );
 
-    // --------------------------------------------------------
-    // 3️⃣ Update group total
-    // --------------------------------------------------------
     await GroupStats.findOneAndUpdate(
       { groupName },
       { $inc: { totalGroupAmount: totalAmount } },
       { upsert: true }
     );
 
-    res.status(200).json({
-      message: "Split stored successfully!",
-      splitAmong: members,
-      perPersonAmount
+    return res.status(200).json({
+      message: "Equal split stored successfully!",
+      members,
+      perPersonAmount,
+      mode: "equalSplit"
     });
 
   } catch (err) {
     console.error("Error storing contribution:", err);
-    res.status(500).json({ error: "Failed to store contribution." });
+    return res.status(500).json({ error: "Failed to store contribution." });
   }
 }
 
