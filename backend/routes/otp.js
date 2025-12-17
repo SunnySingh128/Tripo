@@ -85,7 +85,7 @@ router.post("/verify-otp", (req, res) => {
     return res.status(400).send("OTP not requested");
   }
 
-  console.log("Checking OTP...");
+  cconsole.log("Verifying OTP...");
 
   if (Date.now() > otpStore[phone].expiry) {
     delete otpStore[phone];
