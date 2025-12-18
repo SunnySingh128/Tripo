@@ -23,8 +23,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Anime />} />
         <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Auth" element={<Auth />} />
+        <Route path="/Login" element={<protectedRoute><Login /></protectedRoute>} />
+        <Route path="/Auth" element={<ProtectedRoute><Auth /></ProtectedRoute>} />
         <Route path="/Restaurants" element={<ProtectedRoute><Rst /></ProtectedRoute>} />
         <Route path="/Hotels" element={<ProtectedRoute><Hotels /></ProtectedRoute>} />
         <Route path="/Transportation" element={<ProtectedRoute><Transp /></ProtectedRoute>} />
