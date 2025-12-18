@@ -10,7 +10,6 @@ It also includes **OTP-based authentication** for secure access and **voice comm
 - ✅ **Bill Splitting** – Calculate and divide trip expenses fairly among friends.  
 - ✅ **Friend Management** – Add/remove friends and track who owes what.  
 - ✅ **OTP Verification** – Secure login using one-time password authentication.  
-- ✅ **Voice Command Support** – Get final expense summaries with simple voice commands.  
 - ✅ **User-Friendly UI** – Clean and responsive interface for smooth experience.  
 
 ---
