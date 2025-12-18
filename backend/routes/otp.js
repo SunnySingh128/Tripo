@@ -55,7 +55,7 @@ router.post("/send-otp", async (req, res) => {
         
     
     apiInstance.sendTransacEmail(sendSmtpEmail)
-    .then(function (data) {
+    .then(function (data) { 
       console.log("API called successfully. Returned data: ");
     })
     .catch(err =>{
@@ -85,9 +85,9 @@ router.post("/verify-otp", (req, res) => {
     return res.status(400).send("OTP not requested");
   }
 
-  cconsole.log("Verifying OTP...");
+  console.log("Verifying OTP...");
 
-  if (Date.now() > otpStore[phone].expiry) {
+  if (Date.now() > otpStore[phone].expiry) { 
     delete otpStore[phone];
     return res.status(400).send("OTP expired");
   }
@@ -96,11 +96,11 @@ router.post("/verify-otp", (req, res) => {
     delete otpStore[phone];
 
     const token = jwt.sign({ phone }, process.env.SECRET, { expiresIn: "2h" });
-
-    return res.json({ success: true, token });
+  
+    return res.json({ success: true, token }); 
   } else {
     return res.status(400).send("Invalid OTP");
   }
 });
 
-module.exports = router;
+module.exports = router; 
