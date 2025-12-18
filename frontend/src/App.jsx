@@ -22,9 +22,9 @@ function App() {
         <AuthProvider>
       <Routes>
         <Route path="/" element={<Anime />} />
-        <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/Home" element={<Home />} />
         <Route path="/Login" element={<protectedRoute><Login /></protectedRoute>} />
-        <Route path="/Auth" element={<ProtectedRoute><Auth /></ProtectedRoute>} />
+        <Route path="/Auth" element={<Auth />} />
         <Route path="/Restaurants" element={<ProtectedRoute><Rst /></ProtectedRoute>} />
         <Route path="/Hotels" element={<ProtectedRoute><Hotels /></ProtectedRoute>} />
         <Route path="/Transportation" element={<ProtectedRoute><Transp /></ProtectedRoute>} />
